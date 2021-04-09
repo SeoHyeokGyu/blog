@@ -31,8 +31,9 @@ public class User {
     @Column(nullable = false, length = 50)
     private  String email;
 
-    @ColumnDefault("'user'")
-    private String role; //Enum 사용해함, admin,user,manager
+    //DB에서 ENUM 타입이 없기 때문
+    @Enumerated(EnumType.STRING)
+    private Role role; //Enum 사용해함, admin,user,manager
 
     @CreationTimestamp // 시간이 자동으로 입력
     private Timestamp createDate;
