@@ -8,11 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -23,6 +21,23 @@ public class DummyControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    //json 받아서
+    @Transactional
+    @PutMapping("/dummy/user/{id}")
+    public User updateUser(@PathVariable int id,@RequestBody User requestUser){
+
+        System.out.println(id);
+        System.out.println(requestUser.getPassword());
+        System.out.println(requestUser.getEmail());
+
+        User user = userRepository.findById(id).orElseThrow(()->{
+            return new IllegalArgumentException("수정에 실패하였습니다.");
+        });
+        requestUser.setPassword(requestUser.getPassword());
+        requestUser.setEmail(requestUser.getEmail());
+        //userRepository.save(requestUser);
+        return null;
+    }
     @GetMapping("dummy/users")
     public List<User> list(){
         return userRepository.findAll();
