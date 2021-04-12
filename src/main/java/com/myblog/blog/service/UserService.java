@@ -18,10 +18,5 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(readOnly = true) //정합성
-    public User login(User user) {
-        return userRepository.findByUsernameAndPassword(user.getUsername(),user.getPassword());
-
-    }
 
 }
