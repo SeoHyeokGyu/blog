@@ -1,27 +1,47 @@
 package com.myblog.blog.config;
 
 
+import com.myblog.blog.config.auth.PrincipalDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true) //특정주소 접근하면 권한 및 인증을 미리 체크함
 @EnableWebSecurity // security filter
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private PrincipalDetailService principalDetailService;
+
+    @Bean
+    public BCryptPasswordEncoder encoderPWD(){
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(principalDetailService).passwordEncoder(encoderPWD());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/auth/**")
+                .antMatchers("/auth/**","/js/**","/css/**","/image/**","/")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/auth/loginForm");
+                .loginPage("/auth/loginForm")
+                .loginProcessingUrl("/auth/loginProc")
+                .defaultSuccessUrl("/");
 
     }
 }
