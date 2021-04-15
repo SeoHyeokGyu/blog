@@ -27,9 +27,31 @@ public class BoardService {
         board.setUser(user);
         boardRepository.save(board);
     }
+
+    @Transactional(readOnly = true)
     public Page<Board> boardList(Pageable pageable){
         return boardRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Board boardDetail(int id){
+        return boardRepository.findById(id)
+                .orElseThrow(()->{
+                    return new IllegalArgumentException("글 상세 실패 : 아이디 찾을 수 없음");
+                });
+    }
 
+    @Transactional
+    public void delete(int id){
+         boardRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void update(int id,Board requestBoard){
+        Board board = boardRepository.findById(id).orElseThrow(()->{
+           return new IllegalArgumentException("글 수정 실패");
+        });
+        board.setTitle(requestBoard.getTitle());
+        board.setContent(requestBoard.getContent());
+    }
 }
