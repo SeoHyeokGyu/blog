@@ -11,8 +11,7 @@ public class BoardController {
 
 
     @GetMapping({"","/"})
-    public String index(@AuthenticationPrincipal PrincipalDetail principalDetail){
-        System.out.println("로그인 사용자"+principalDetail.getUsername());
+    public String index(){
         return "index";
     }
 }
