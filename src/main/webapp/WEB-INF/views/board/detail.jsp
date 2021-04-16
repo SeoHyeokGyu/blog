@@ -20,8 +20,8 @@
 
 <button class="btn btn-secondary" onclick="history.back()">back</button>
 <c:if test="${board.user.id == principal.user.id}">
-    <a href="/board/${board.id}/updateForm" id="btn-delete" class="btn btn-danger">delete</a>
-    <button id="btn-update" class="btn btn-warning">modify</button>
+    <buttton id="btn-delete" id="btn-delete" class="btn btn-danger">delete</buttton>
+    <a href="/board/${board.id}/updateForm" class="btn btn-warning">modify</a>
 
 </c:if>
 <script src="/js/board.js"></script>

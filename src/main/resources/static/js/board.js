@@ -2,13 +2,13 @@ let index = {
     init: function () {
         $("#btn-save").on("click",()=>{ // this를 바인딩하기위한 사용
             this.save();
-        }),
+        });
             $("#btn-delete").on("click",()=>{ // this를 바인딩하기위한 사용
                 this.deleteById();
-            }),
+            });
             $("#btn-update").on("click",()=>{ // this를 바인딩하기위한 사용
                 this.update();
-            })
+            });
 
     },
 

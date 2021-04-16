@@ -2,12 +2,12 @@
 <%@ include file="layout/header.jsp"%>
 <div class="container">
 
-    <c:forEach var="board" items="${boards}">
+    <c:forEach var="board" items="${boards.content}">
     <div class="card m-2" >
         <div class="card-body">
             <h4 class="card-title">${board.title}</h4>
             <p class="card-text">${board.content}</p>
-            <a href="/board/${board.}" class="btn btn-primary">상세보기</a>
+            <a href="/board/${board.id}" class="btn btn-primary">상세보기</a>
         </div>
     </div>
     </c:forEach>
