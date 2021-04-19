@@ -32,15 +32,27 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
+    public User findUser(String username){
+        User user = userRepository.findByUsername(username).orElseGet(()->{
+            return new User();
+        });
+        return user;
+    }
+
     @Transactional
     public void update(User user){
         User user1 = userRepository.findById(user.getId()).orElseThrow(()->{
            return new IllegalArgumentException("회원 찾기 실패");
         });
-        String rawPassword = user.getPassword();
-        String encPassword = encoder.encode(rawPassword);
-        user1.setPassword(encPassword);
-        user1.setEmail(user.getEmail());
+        //validate check
+        if(user1.getOauth() == null || user1.getOauth().equals("")){
+            String rawPassword = user.getPassword();
+            String encPassword = encoder.encode(rawPassword);
+            user1.setPassword(encPassword);
+            user1.setEmail(user.getEmail());
+
+        }
     }
 
 
