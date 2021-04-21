@@ -14,7 +14,7 @@
             <div>
                 ${board.content}
             </div>
-        </div>
+
         <hr />
 
 
@@ -22,7 +22,40 @@
 <c:if test="${board.user.id == principal.user.id}">
     <buttton id="btn-delete" id="btn-delete" class="btn btn-danger">delete</buttton>
     <a href="/board/${board.id}/updateForm" class="btn btn-warning">modify</a>
-
 </c:if>
+
+
+    <div class="card">
+        <form>
+            <input type="hidden" id="userId" value="${principal.user.id}">
+            <input type="hidden" id="boardId" value="${board.id}">
+            <div class="card-body">
+                <textarea id="reply-content" class="form-control" rows="3"></textarea>
+             </div>
+            <div class="card-footer">
+                <button type="button" id="btn-reply-save" class="btn btn-primary">등록</button>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-header">댓글 리스트</div>
+        <ul id="reply-items" class="list-group">
+            <c:forEach var="reply" items="${board.replys}">
+            <li id="reply"class="list-group-item d-flex justify-content-between">
+                <div>${reply.content}</div>
+            <div class="d-flex">
+                <div class="font-italic">작성자 : ${reply.user.username}&nbsp;</div>
+            <button class="badge">delete</button>
+            </div>
+            </li>
+            </c:forEach>
+
+        </ul>
+    </div>
+</div>
+
+
+
 <script src="/js/board.js"></script>
 <%@ include file="../layout/footer.jsp"%>

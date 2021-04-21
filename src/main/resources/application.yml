@@ -41,5 +41,6 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-  kakao:
-    key: cos1234
+
+kakao:
+  key: cos1234

@@ -1,5 +1,6 @@
 package com.myblog.blog.model;
 
+import com.myblog.blog.dto.ReplySaveRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,4 +35,6 @@ public class Reply {
 
     @CreationTimestamp
     private Timestamp createDate;
+
+
 }

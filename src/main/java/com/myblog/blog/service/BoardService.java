@@ -1,9 +1,12 @@
 package com.myblog.blog.service;
 
+import com.myblog.blog.dto.ReplySaveRequestDto;
 import com.myblog.blog.model.Board;
+import com.myblog.blog.model.Reply;
 import com.myblog.blog.model.Role;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.BoardRepository;
+import com.myblog.blog.repository.ReplyRepository;
 import com.myblog.blog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +22,13 @@ import java.util.List;
 public class BoardService {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Transactional
     public void write(Board board,User user) {
@@ -53,5 +62,22 @@ public class BoardService {
         });
         board.setTitle(requestBoard.getTitle());
         board.setContent(requestBoard.getContent());
+    }
+
+    @Transactional
+    public void replyWrite(ReplySaveRequestDto replySaveRequestDto){
+
+        User user = userRepository.findById(replySaveRequestDto.getUserId()).orElseThrow(()->{
+            return new IllegalArgumentException("댓글 작성 실패 : 유저 id ");
+        });
+        Board board = boardRepository.findById(replySaveRequestDto.getBoardId()).orElseThrow(()->{
+            return new IllegalArgumentException("댓글 작성 실패 : 게시글 id ");
+        });
+
+        Reply reply = Reply.builder().user(user).board(board).content(replySaveRequestDto.getContent())
+                .build();
+
+
+        replyRepository.save(reply);
     }
 }
