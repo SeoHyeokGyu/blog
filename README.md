@@ -36,3 +36,7 @@ intelij 사용 연습 및 스프링부트 사용
 
 + 카카오 로그인
 <img width="1774" alt="스크린샷 2021-04-22 오후 1 53 47" src="https://user-images.githubusercontent.com/20594299/115665464-4db75780-a37e-11eb-9570-62f985b39e0d.png">
+
+*** 
+## 어려웠던 부분
+Oauth2.0 이용하여 인증, 권한을 부여받는부분
