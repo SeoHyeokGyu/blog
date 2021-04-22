@@ -25,7 +25,7 @@ public class Board {
     private int id;
 
     @Column(nullable = false, length = 100)
-    private  String title;
+    private String title;
 
     @Lob //대용량 데이터
     private String content; // 라이브러리 사용예정
@@ -37,7 +37,7 @@ public class Board {
     @JoinColumn(name = "userId")
     private User user;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties({"board"})
     @OrderBy("id desc")
     private List<Reply> replys;

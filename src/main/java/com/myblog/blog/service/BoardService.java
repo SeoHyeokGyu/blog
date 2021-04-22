@@ -22,52 +22,49 @@ import java.util.List;
 public class BoardService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private BoardRepository boardRepository;
 
     @Autowired
     private ReplyRepository replyRepository;
 
     @Transactional
-    public void write(Board board,User user) {
+    public void write(Board board, User user) {
         board.setCount(0);
         board.setUser(user);
         boardRepository.save(board);
     }
 
     @Transactional(readOnly = true)
-    public Page<Board> boardList(Pageable pageable){
+    public Page<Board> boardList(Pageable pageable) {
         return boardRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public Board boardDetail(int id){
+    public Board boardDetail(int id) {
         return boardRepository.findById(id)
-                .orElseThrow(()->{
+                .orElseThrow(() -> {
                     return new IllegalArgumentException("글 상세 실패 : 아이디 찾을 수 없음");
                 });
     }
 
     @Transactional
-    public void delete(int id){
-         boardRepository.deleteById(id);
+    public void delete(int id) {
+        boardRepository.deleteById(id);
     }
 
     @Transactional
-    public void update(int id,Board requestBoard){
-        Board board = boardRepository.findById(id).orElseThrow(()->{
-           return new IllegalArgumentException("글 수정 실패");
+    public void update(int id, Board requestBoard) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> {
+            return new IllegalArgumentException("글 수정 실패");
         });
         board.setTitle(requestBoard.getTitle());
         board.setContent(requestBoard.getContent());
     }
 
     @Transactional
-    public void replyWrite(ReplySaveRequestDto replySaveRequestDto){
+    public void replyWrite(ReplySaveRequestDto replySaveRequestDto) {
 
-        int result = replyRepository.mSave(replySaveRequestDto.getUserId(),replySaveRequestDto.getBoardId(),replySaveRequestDto.getContent());
+        int result = replyRepository.mSave(replySaveRequestDto.getUserId(), replySaveRequestDto.getBoardId(), replySaveRequestDto.getContent());
         System.out.println(result);
     }
 }
