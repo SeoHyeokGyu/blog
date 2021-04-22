@@ -4,10 +4,6 @@ import com.myblog.blog.model.Role;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,12 +20,17 @@ public class UserService {
 
 
     @Transactional
-    public void register(User user) {
+    public int register(User user) {
         String rawPassword = user.getPassword();
         String encPassword = encoder.encode(rawPassword);
         user.setPassword(encPassword);
         user.setRole(Role.USER);
-        userRepository.save(user);
+        try{
+            userRepository.save(user);
+            return 1;
+        }catch (Exception e){
+            return -1;
+        }
     }
 
     @Transactional(readOnly = true)

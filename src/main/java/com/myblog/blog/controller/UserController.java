@@ -23,7 +23,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.UUID;
 
 //미인증 사용자들 접속 경로 auth/**
 //
@@ -51,41 +50,49 @@ public class UserController {
     @GetMapping("/auth/kakao/callback")
     public String kakaoCallback(String code){
 
-
         RestTemplate restTemplate = new RestTemplate();
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
         params.add("grant_type","authorization_code");
         params.add("client_id","9597e89b96cfd76bdc6d916bca4275ae");
-        params.add("redierct_uri","http://localhost:8080/auth/kakao/callback");
+        params.add("redirect_uri","http://localhost:8080/auth/kakao/callback");
         params.add("code",code);
 
         // header + body
-        HttpEntity<MultiValueMap<String,String>> kakaoTokenReauest = new HttpEntity<>(params,headers);
+        HttpEntity<MultiValueMap<String,String>> kakaoTokenRequest = new HttpEntity<>(params,headers);
 
         // http request
-        ResponseEntity<String> responseEntity = restTemplate.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST,kakaoTokenReauest,String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
 
-        OAuthToken oAuthToken = null;
+        OAuthToken oauthToken = null;
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-             oAuthToken = objectMapper.readValue(responseEntity.getBody(),OAuthToken.class);
+             oauthToken = objectMapper.readValue(responseEntity.getBody(),OAuthToken.class);
+        } catch (JsonMappingException e){
+            e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         RestTemplate restTemplate2 = new RestTemplate();
+
         HttpHeaders headers2 = new HttpHeaders();
-        headers2.add("Authorzation","Bearer "+oAuthToken.getAccess_token());
+        headers2.add("Authorization","Bearer "+oauthToken.getAccess_token());
         headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
 
         // header + body
-        HttpEntity<MultiValueMap<String,String>> kakaoProfileReauest = new HttpEntity<>(headers2);
+        HttpEntity<MultiValueMap<String,String>> kakaoProfileReauest2 = new HttpEntity<>(headers2);
 
         // http request
-        ResponseEntity<String> responseEntity2 = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST,kakaoProfileReauest,String.class);
+        ResponseEntity<String> responseEntity2 = restTemplate2.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST,kakaoProfileReauest2,String.class);
 
         KakaoProfile kakaoProfile = null;
         ObjectMapper objectMapper2 = new ObjectMapper();
@@ -96,21 +103,33 @@ public class UserController {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        System.out.println(kakaoProfile.getId());
+        System.out.println(kakaoProfile.getKakao_account().getEmail());
 
-        UUID uuid = UUID.randomUUID();
-        User kakaoUser = User.builder().username(kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId())
+        System.out.println(kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId());
+        System.out.println(kakaoProfile.getKakao_account().getEmail());
+        System.out.println(kakaoKey);
+
+
+        User kakaoUser = User.builder()
+                .username(kakaoProfile.getKakao_account().getEmail()+"_"+kakaoProfile.getId())
                 .password(kakaoKey)
                 .email(kakaoProfile.getKakao_account().getEmail())
                 .oauth("kakao")
                 .build();
 
         User originUser = userService.findUser(kakaoUser.getUsername());
-        if(originUser == null){
-            System.out.println("신규 회원.");
+        System.out.println(kakaoUser.getUsername());
+
+        if(originUser.getUsername() == null){
+            System.out.println("신규 회원입니다. 회원가입 진행합니다.");
             userService.register(kakaoUser);
         }
+        System.out.println("Login 진행합니다.");
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(kakaoUser.getUsername(),kakaoKey));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return "redirect:/";
     }
 
